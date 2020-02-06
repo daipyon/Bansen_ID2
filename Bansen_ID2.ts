@@ -181,29 +181,8 @@ async function Start() {
 Start();
 
 
-async function AbemaLogin () {
-  // Abemaログイン
-  await RPA.WebBrowser.get("https://docs.google.com/spreadsheets/d/1kD1JW8Fu4cu4ng3pgdNVMyh_X59VMg77IIWkyR4tJ7U/edit#gid=1944393823");
-  await RPA.sleep(500);
-  try {
-    const GoogleLoginID = await RPA.WebBrowser.wait(RPA.WebBrowser.Until.elementLocated({xpath:'//*[@id="identifierId"]'}),5000);
-    await RPA.WebBrowser.sendKeys(GoogleLoginID,[`${AbematvID}`]);
-  } catch {
-    return;
-  }
-  const NextButton1 = await RPA.WebBrowser.findElementByXPath('//*[@id="identifierNext"]');
-  await RPA.WebBrowser.mouseClick(NextButton1);
-  await RPA.sleep(1000);
-  const GoogleLoginPW = await RPA.WebBrowser.wait(RPA.WebBrowser.Until.elementLocated({xpath:'//*[@id="password"]/div[1]/div/div[1]/input'}),5000);
-  await RPA.WebBrowser.sendKeys(GoogleLoginPW,[`${AbematvPW}`]);
-  const NextButton2 =  await RPA.WebBrowser.findElementByXPath('//*[@id="passwordNext"]');
-  await RPA.WebBrowser.mouseClick(NextButton2);
-  await RPA.sleep(4000);
-}
-
-
-async function AAAMSLogin () {
-  await RPA.WebBrowser.get('https://admin.vega.fm/');
+async function AAAMSLogin() {
+  await RPA.WebBrowser.get(process.env.AAAMS_Login_URL);
   await RPA.sleep(2000);
   try {
     const AAAMS_loginID_ele = await RPA.WebBrowser.wait(RPA.WebBrowser.Until.elementLocated({xpath:'/html/body/div[2]/div/div[2]/form/div/div/div[3]/span/div/div/div/div/div/div/div/div/div[3]/div[1]/div/input'}),8000);
@@ -224,7 +203,7 @@ async function AAAMSLogin () {
     RPA.Logger.info('AAAMSアラートが出ませんでしたので次に進みます');
   }
   RPA.Logger.info('番宣アカウントを直接呼び出します');
-  await RPA.WebBrowser.get('https://admin.vega.fm/#/campaign/{%22account%22:{%22ids%22:[%22ac_2%22]},%22accountType%22:%22BANSEN_AD%22}');
+  await RPA.WebBrowser.get(process.env.AAAMS_Account_3);
   await RPA.sleep(3000);
   // 更新画面をスルー
   try {
@@ -243,7 +222,7 @@ async function AAAMSLogin () {
 
 async function AAAMSLogin2(){
   RPA.Logger.info('番宣アカウントを直接呼び出します');
-  await RPA.WebBrowser.get('https://admin.vega.fm/#/campaign/{%22account%22:{%22ids%22:[%22ac_2%22]},%22accountType%22:%22BANSEN_AD%22}');
+  await RPA.WebBrowser.get(process.env.AAAMS_Account_3);
   await RPA.sleep(2300);
 }
 
@@ -1252,7 +1231,7 @@ async function AdvertisementStart2(WorkData, Row) {
         await RPA.WebBrowser.refresh();
       }
       RPA.Logger.info('番宣アカウントを直接呼び出します')
-      await RPA.WebBrowser.get('https://admin.vega.fm/#/campaign/{%22account%22:{%22ids%22:[%22ac_2%22]},%22accountType%22:%22BANSEN_AD%22}');
+      await RPA.WebBrowser.get(process.env.AAAMS_Account_3);
       await RPA.sleep(3000);
       // 代理店の箇所に「番宣」の文字が入っていない場合は再更新
       const AgencyName = await RPA.WebBrowser.findElementByXPath('/html/body/div[1]/div/div[2]/div[3]/div/div[1]/form/div/div[1]/div[2]/div/div[2]/div[2]/div/div/div/div/div/span[1]/div[1]');
