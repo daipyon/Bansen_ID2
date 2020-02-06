@@ -185,29 +185,8 @@ async function Start() {
 Start();
 
 
-async function AbemaLogin() {
-  // Abemaログイン
-  await RPA.WebBrowser.get("https://docs.google.com/spreadsheets/d/1kD1JW8Fu4cu4ng3pgdNVMyh_X59VMg77IIWkyR4tJ7U/edit#gid=1944393823");
-  await RPA.sleep(500);
-  try {
-    const GoogleLoginID = await RPA.WebBrowser.wait(RPA.WebBrowser.Until.elementLocated({xpath:'//*[@id="identifierId"]'}),5000);
-    await RPA.WebBrowser.sendKeys(GoogleLoginID,[`${AbematvID}`]);
-  } catch {
-    return;
-  }
-  const NextButton1 = await RPA.WebBrowser.findElementByXPath('//*[@id="identifierNext"]');
-  await RPA.WebBrowser.mouseClick(NextButton1);
-  await RPA.sleep(1000);
-  const GoogleLoginPW = await RPA.WebBrowser.wait(RPA.WebBrowser.Until.elementLocated({xpath:'//*[@id="password"]/div[1]/div/div[1]/input'}),5000);
-  await RPA.WebBrowser.sendKeys(GoogleLoginPW,[`${AbematvPW}`]);
-  const NextButton2 =  await RPA.WebBrowser.findElementByXPath('//*[@id="passwordNext"]');
-  await RPA.WebBrowser.mouseClick(NextButton2);
-  await RPA.sleep(4000);
-}
-
-
 async function AAAMSLogin(AccountFlag) {
-  await RPA.WebBrowser.get('https://admin.vega.fm/');
+  await RPA.WebBrowser.get(process.env.AAAMS_Login_URL);
   await RPA.sleep(3000);
   try {
     const AAAMS_loginID_ele = await RPA.WebBrowser.wait(RPA.WebBrowser.Until.elementLocated({xpath:'/html/body/div[2]/div/div[2]/form/div/div/div[3]/span/div/div/div/div/div/div/div/div/div[3]/div[1]/div/input'}),8000);
@@ -229,11 +208,11 @@ async function AAAMSLogin(AccountFlag) {
   }
   if (AccountFlag == '外部リンク付き番宣') {
     RPA.Logger.info('外部リンク付き自社広告アカウントを直接呼び出します');
-    await RPA.WebBrowser.get('https://admin.vega.fm/#/campaign/{%22account%22:{%22ids%22:[%22ac_722%22]},%22accountType%22:%22EXTERNAL_LINK_HOUSE_AD%22}');
+    await RPA.WebBrowser.get(process.env.AAAMS_Account_1);
   }
   if (AccountFlag == '買える') {
     RPA.Logger.info('買えるAbemaTV社アカウントを直接呼び出しします');
-    await RPA.WebBrowser.get('https://admin.vega.fm/#/campaign/{%22account%22:{%22ids%22:[%22ac_561%22]},%22accountType%22:%22EXTERNAL_LINK_HOUSE_AD%22}');
+    await RPA.WebBrowser.get(process.env.AAAMS_Account_2);
   }
   await RPA.sleep(3000);
   // 更新画面をスルー
@@ -254,11 +233,11 @@ async function AAAMSLogin(AccountFlag) {
 async function AAAMSLogin2(AccountFlag) {
   if (AccountFlag == '外部リンク付き番宣') {
     RPA.Logger.info('外部リンク付き自社広告アカウントを直接呼び出します');
-    await RPA.WebBrowser.get('https://admin.vega.fm/#/campaign/{%22account%22:{%22ids%22:[%22ac_722%22]},%22accountType%22:%22EXTERNAL_LINK_HOUSE_AD%22}');
+    await RPA.WebBrowser.get(process.env.AAAMS_Account_1);
   }
   if (AccountFlag == '買える') {
     RPA.Logger.info('買えるAbemaTV社アカウントを直接呼び出しします');
-    await RPA.WebBrowser.get('https://admin.vega.fm/#/campaign/{%22account%22:{%22ids%22:[%22ac_561%22]},%22accountType%22:%22EXTERNAL_LINK_HOUSE_AD%22}');
+    await RPA.WebBrowser.get(process.env.AAAMS_Account_2);
   }
   await RPA.sleep(2300);
 }
@@ -1148,11 +1127,11 @@ async function AdvertisementStart2(AccountFlag, WorkData, Row) {
       }
       if (AccountFlag == '外部リンク付き番宣') {
         RPA.Logger.info('外部リンク付き自社広告アカウントを直接呼び出します');
-        await RPA.WebBrowser.get('https://admin.vega.fm/#/campaign/{%22account%22:{%22ids%22:[%22ac_722%22]},%22accountType%22:%22EXTERNAL_LINK_HOUSE_AD%22}');
+        await RPA.WebBrowser.get(process.env.AAAMS_Account_1);
       }
       if (AccountFlag == '買える') {
         RPA.Logger.info('買えるAbemaTV社アカウントを直接呼び出しします');
-        await RPA.WebBrowser.get('https://admin.vega.fm/#/campaign/{%22account%22:{%22ids%22:[%22ac_561%22]},%22accountType%22:%22EXTERNAL_LINK_HOUSE_AD%22}');
+        await RPA.WebBrowser.get(process.env.AAAMS_Account_2);
       }
       await RPA.sleep(3000);
       // 代理店の箇所に「外部リンク付き番宣」もしくは「【コマース】買えるAbemaTV」の文字が入っていない場合は再更新
