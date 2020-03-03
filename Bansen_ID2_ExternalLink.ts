@@ -1106,8 +1106,14 @@ async function GetAdvertisementId(IdList, Row) {
   await RPA.WebBrowser.mouseClick(OKButton2);
   await RPA.sleep(5000);
   // 発番した広告IDの最右側の「・・・」をマウスオーバー
-  const BalloonMenu = await RPA.WebBrowser.findElementByXPath('/html/body/div/div/div[2]/div[3]/div/table/tbody/tr/td[10]/div');
+  const BalloonMenu = await RPA.WebBrowser.wait(
+      RPA.WebBrowser.Until.elementLocated({
+        xpath: '/html/body/div/div/div[2]/div[3]/div/table/tbody/tr/td[10]/div'
+      }),
+      5000
+    );
   await RPA.WebBrowser.mouseMove(BalloonMenu);
+  await RPA.sleep(1000);
   // 「配信を変更する」をクリック
   const ChangeDelivery = await RPA.WebBrowser.findElementByXPath('/html/body/div/div/div[3]/div/div[4]');
   await RPA.WebBrowser.mouseClick(ChangeDelivery);
@@ -1367,8 +1373,14 @@ async function GetAdvertisementId2(Row) {
   await RPA.WebBrowser.mouseClick(OKButton2);
   await RPA.sleep(5000);
   // 発番した広告IDの最右側の「・・・」をマウスオーバー
-  const BalloonMenu = await RPA.WebBrowser.findElementByXPath('/html/body/div/div/div[2]/div[3]/div/table/tbody/tr/td[10]/div');
+  const BalloonMenu = await RPA.WebBrowser.wait(
+      RPA.WebBrowser.Until.elementLocated({
+        xpath: '/html/body/div/div/div[2]/div[3]/div/table/tbody/tr/td[10]/div'
+      }),
+      5000
+    );
   await RPA.WebBrowser.mouseMove(BalloonMenu);
+  await RPA.sleep(1000);
   // 「配信を変更する」をクリック
   const ChangeDelivery = await RPA.WebBrowser.findElementByXPath('/html/body/div/div/div[3]/div/div[4]');
   await RPA.WebBrowser.mouseClick(ChangeDelivery);
