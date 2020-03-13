@@ -200,39 +200,32 @@ Start();
 async function AAAMSLogin() {
   await RPA.WebBrowser.get(process.env.AAAMS_Login_URL);
   await RPA.sleep(2000);
-  try {
-    const AAAMS_loginID_ele = await RPA.WebBrowser.wait(RPA.WebBrowser.Until.elementLocated({xpath:'/html/body/div[2]/div/div[2]/form/div/div/div[3]/span/div/div/div/div/div/div/div/div/div[3]/div[1]/div/input'}),8000);
-    await RPA.WebBrowser.sendKeys(AAAMS_loginID_ele,[AAAMSID]);
-    const AAAMS_loginPW_ele = RPA.WebBrowser.findElementByXPath('/html/body/div[2]/div/div[2]/form/div/div/div[3]/span/div/div/div/div/div/div/div/div/div[3]/div[2]/div/div/input');
-    await RPA.WebBrowser.sendKeys(AAAMS_loginPW_ele,[AAAMSPW]);
-    const AAAMS_LoginNextButton = await RPA.WebBrowser.findElementByXPath('/html/body/div[2]/div/div[2]/form/div/div/button');
-    await RPA.WebBrowser.mouseClick(AAAMS_LoginNextButton);
-    await RPA.sleep(3000);
-  } catch {
-    RPA.Logger.info('ログイン画面を飛ばします');
-  }
-  try {
-    const Alartbutton = await RPA.WebBrowser.findElementByXPath('//*[@id="reactroot"]/div/div[5]/div[2]/footer/div[1]');
-    await RPA.WebBrowser.mouseClick(Alartbutton);
-    await RPA.sleep(2000);
-  } catch {
-    RPA.Logger.info('AAAMSアラートが出ませんでしたので次に進みます');
-  }
-  RPA.Logger.info('番宣アカウントを直接呼び出します');
-  await RPA.WebBrowser.get(process.env.AAAMS_Account_3);
+  const AAAMS_loginID_ele = await RPA.WebBrowser.wait(RPA.WebBrowser.Until.elementLocated({xpath:'/html/body/div[2]/div/div[2]/form/div/div/div[3]/span/div/div/div/div/div/div/div/div/div[3]/div[1]/div/input'}),8000);
+  await RPA.WebBrowser.sendKeys(AAAMS_loginID_ele,[AAAMSID]);
+  const AAAMS_loginPW_ele = RPA.WebBrowser.findElementByXPath('/html/body/div[2]/div/div[2]/form/div/div/div[3]/span/div/div/div/div/div/div/div/div/div[3]/div[2]/div/div/input');
+  await RPA.WebBrowser.sendKeys(AAAMS_loginPW_ele,[AAAMSPW]);
+  const AAAMS_LoginNextButton = await RPA.WebBrowser.findElementByXPath('/html/body/div[2]/div/div[2]/form/div/div/button');
+  await RPA.WebBrowser.mouseClick(AAAMS_LoginNextButton);
   await RPA.sleep(3000);
   // 更新画面をスルー
   try {
-    const Koushin = await RPA.WebBrowser.wait(RPA.WebBrowser.Until.elementLocated({xpath:'/html/body/div[1]/div/div[5]/div[2]/header/div'}),5000);
+    const Koushin = await RPA.WebBrowser.wait(RPA.WebBrowser.Until.elementLocated({xpath:'/html/body/div/div/div[6]/div[2]/header/div'}),5000);
     const KoushinText = await Koushin.getText();
     if (KoushinText.length > 1) {
-      const NextButton01 = await RPA.WebBrowser.findElementByXPath('/html/body/div[1]/div/div[5]/div[2]/footer/div[1]');
+      RPA.Logger.info(KoushinText);
+      const NextButton01 = await RPA.WebBrowser.findElementByXPath('/html/body/div[1]/div/div[6]/div[2]/footer/div[2]');
       await RPA.WebBrowser.mouseClick(NextButton01);
-      await RPA.sleep(1000);
+      await RPA.sleep(3000);
     }
   } catch {
     RPA.Logger.info('更新画面は出ませんでした');
   }
+  const Alartbutton = await RPA.WebBrowser.findElementByXPath('/html/body/div/div/div[5]/div[2]/footer/div[1]');
+  await RPA.WebBrowser.mouseClick(Alartbutton);
+  await RPA.sleep(2000);
+  RPA.Logger.info('番宣アカウントを直接呼び出します');
+  await RPA.WebBrowser.get(process.env.AAAMS_Account_3);
+  await RPA.sleep(3000);
 }
 
 
@@ -1265,12 +1258,13 @@ async function AdvertisementStart2(WorkData, Row) {
       }
       // 更新画面をスルー
       try {
-        const Koushin = await RPA.WebBrowser.wait(RPA.WebBrowser.Until.elementLocated({xpath:'/html/body/div[1]/div/div[5]/div[2]/header/div'}),5000);
+        const Koushin = await RPA.WebBrowser.wait(RPA.WebBrowser.Until.elementLocated({xpath:'/html/body/div/div/div[6]/div[2]/header/div'}),5000);
         const KoushinText = await Koushin.getText();
         if (KoushinText.length > 1) {
-          const NextButton01 = await RPA.WebBrowser.findElementByXPath('/html/body/div[1]/div/div[5]/div[2]/footer/div[1]');
+          RPA.Logger.info(KoushinText);
+          const NextButton01 = await RPA.WebBrowser.findElementByXPath('/html/body/div[1]/div/div[6]/div[2]/footer/div[2]');
           await RPA.WebBrowser.mouseClick(NextButton01);
-          await RPA.sleep(1000);
+          await RPA.sleep(3000);
         }
       } catch {
         RPA.Logger.info('更新画面は出ませんでした')
