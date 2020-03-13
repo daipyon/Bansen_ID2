@@ -226,7 +226,7 @@ async function AAAMSLogin() {
     const Koushin = await RPA.WebBrowser.wait(RPA.WebBrowser.Until.elementLocated({xpath:'/html/body/div[1]/div/div[5]/div[2]/header/div'}),5000);
     const KoushinText = await Koushin.getText();
     if (KoushinText.length > 1) {
-      const NextButton01 = await RPA.WebBrowser.findElementByXPath('/html/body/div[1]/div/div[5]/div[2]/footer/div[2]');
+      const NextButton01 = await RPA.WebBrowser.findElementByXPath('/html/body/div[1]/div/div[5]/div[2]/footer/div[1]');
       await RPA.WebBrowser.mouseClick(NextButton01);
       await RPA.sleep(1000);
     }
@@ -1268,7 +1268,7 @@ async function AdvertisementStart2(WorkData, Row) {
         const Koushin = await RPA.WebBrowser.wait(RPA.WebBrowser.Until.elementLocated({xpath:'/html/body/div[1]/div/div[5]/div[2]/header/div'}),5000);
         const KoushinText = await Koushin.getText();
         if (KoushinText.length > 1) {
-          const NextButton01 = await RPA.WebBrowser.findElementByXPath('/html/body/div[1]/div/div[5]/div[2]/footer/div[2]');
+          const NextButton01 = await RPA.WebBrowser.findElementByXPath('/html/body/div[1]/div/div[5]/div[2]/footer/div[1]');
           await RPA.WebBrowser.mouseClick(NextButton01);
           await RPA.sleep(1000);
         }
