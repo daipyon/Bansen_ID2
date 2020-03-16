@@ -1,11 +1,5 @@
 import RPA from "ts-rpa";
 import { WebDriver, By, FileDetector, Key } from "selenium-webdriver";
-import { rootCertificates } from "tls";
-import { worker } from "cluster";
-import { cachedDataVersionTag } from "v8";
-import { start } from "repl";
-import { Command } from "selenium-webdriver/lib/command";
-import { drive } from "googleapis/build/src/apis/drive";
 // デバッグログを最小限(INFOのみ)にする ※[DEBUG]が非表示になる
 RPA.Logger.level = 'INFO';
 
@@ -203,30 +197,62 @@ Start();
 
 async function AAAMSLogin(AccountFlag) {
   await RPA.WebBrowser.get(process.env.AAAMS_Login_URL);
-  await RPA.sleep(3000);
-  const AAAMS_loginID_ele = await RPA.WebBrowser.wait(RPA.WebBrowser.Until.elementLocated({xpath:'/html/body/div[2]/div/div[2]/form/div/div/div[3]/span/div/div/div/div/div/div/div/div/div[3]/div[1]/div/input'}),8000);
-  await RPA.WebBrowser.sendKeys(AAAMS_loginID_ele,[AAAMSID]);
-  const AAAMS_loginPW_ele = RPA.WebBrowser.findElementByXPath('/html/body/div[2]/div/div[2]/form/div/div/div[3]/span/div/div/div/div/div/div/div/div/div[3]/div[2]/div/div/input');
-  await RPA.WebBrowser.sendKeys(AAAMS_loginPW_ele,[AAAMSPW]);
-  const AAAMS_LoginNextButton = await RPA.WebBrowser.findElementByXPath('/html/body/div[2]/div/div[2]/form/div/div/button');
-  await RPA.WebBrowser.mouseClick(AAAMS_LoginNextButton);
-  await RPA.sleep(3000);
-  // 更新画面をスルー
-  try {
-    const Koushin = await RPA.WebBrowser.wait(RPA.WebBrowser.Until.elementLocated({xpath:'/html/body/div/div/div[6]/div[2]/header/div'}),5000);
-    const KoushinText = await Koushin.getText();
-    if (KoushinText.length > 1) {
-      RPA.Logger.info(KoushinText);
-      const NextButton01 = await RPA.WebBrowser.findElementByXPath('/html/body/div[1]/div/div[6]/div[2]/footer/div[2]');
-      await RPA.WebBrowser.mouseClick(NextButton01);
-      await RPA.sleep(3000);
-    }
-  } catch {
-    RPA.Logger.info('更新画面は出ませんでした');
-  }
-  const Alartbutton = await RPA.WebBrowser.findElementByXPath('//*[@id="reactroot"]/div/div[5]/div[2]/footer/div[1]');
-  await RPA.WebBrowser.mouseClick(Alartbutton);
   await RPA.sleep(2000);
+  try {
+    const AAAMS_loginID_ele = await RPA.WebBrowser.wait(
+      RPA.WebBrowser.Until.elementLocated({
+        xpath:
+          '/html/body/div[2]/div/div[2]/form/div/div/div[3]/span/div/div/div/div/div/div/div/div/div[3]/div[1]/div/input'
+      }),
+      8000
+    );
+    await RPA.WebBrowser.sendKeys(AAAMS_loginID_ele, [AAAMSID]);
+    const AAAMS_loginPW_ele = RPA.WebBrowser.findElementByXPath(
+      '/html/body/div[2]/div/div[2]/form/div/div/div[3]/span/div/div/div/div/div/div/div/div/div[3]/div[2]/div/div/input'
+    );
+    await RPA.WebBrowser.sendKeys(AAAMS_loginPW_ele, [AAAMSPW]);
+    const AAAMS_LoginNextButton = await RPA.WebBrowser.findElementByXPath(
+      '/html/body/div[2]/div/div[2]/form/div/div/button'
+    );
+    await RPA.WebBrowser.mouseClick(AAAMS_LoginNextButton);
+    await RPA.sleep(3000);
+  } catch {
+    RPA.Logger.info('ログイン画面飛ばします');
+  }
+
+  await RPA.sleep(2000);
+  // チャンネル更新画面が出るため待機する
+  try {
+    const ChannelAlart = await RPA.WebBrowser.wait(
+      RPA.WebBrowser.Until.elementLocated({
+        xpath: '/html/body/div/div/div[6]/div[2]/header/div'
+      }),
+      5000
+    );
+    const ChannelAlartButton = await RPA.WebBrowser.findElementByXPath(
+      '/html/body/div/div/div[6]/div[2]/footer/div[2]'
+    );
+    const AlartText = await ChannelAlart.getText();
+    if (AlartText == '下記更新されました。設定を確認してください。') {
+      await RPA.WebBrowser.mouseClick(ChannelAlartButton);
+      await RPA.sleep(1500);
+    }
+  } catch {}
+  try {
+    const Alart = await RPA.WebBrowser.wait(
+      RPA.WebBrowser.Until.elementLocated({
+        xpath: '/html/body/div/div/div[5]/div[2]/div/p'
+      }),
+      3000
+    );
+    const Alartbutton = await RPA.WebBrowser.findElementByXPath(
+      '/html/body/div/div/div[5]/div[2]/footer/div[1]'
+    );
+    await RPA.WebBrowser.mouseClick(Alartbutton);
+    await RPA.sleep(2000);
+  } catch {
+    RPA.Logger.info('AAAMS アラート出ませんでしたので次に進みます');
+  }
   if (AccountFlag == '外部リンク付き番宣') {
     RPA.Logger.info('外部リンク付き自社広告アカウントを直接呼び出します');
     await RPA.WebBrowser.get(process.env.AAAMS_Account_1);
@@ -236,6 +262,25 @@ async function AAAMSLogin(AccountFlag) {
     await RPA.WebBrowser.get(process.env.AAAMS_Account_2);
   }
   await RPA.sleep(3000);
+  // 更新画面をスルー
+  try {
+    const Koushin = await RPA.WebBrowser.wait(
+      RPA.WebBrowser.Until.elementLocated({
+        xpath: '/html/body/div[1]/div/div[5]/div[2]/header/div'
+      }),
+      5000
+    );
+    const KoushinText = await Koushin.getText();
+    if (KoushinText.length > 1) {
+      const NextButton01 = await RPA.WebBrowser.findElementByXPath(
+        '/html/body/div[1]/div/div[5]/div[2]/footer/div[1]'
+      );
+      await RPA.WebBrowser.mouseClick(NextButton01);
+      await RPA.sleep(1000);
+    }
+  } catch {
+    RPA.Logger.info('更新画面は出ませんでした');
+  }
 }
 
 
@@ -1159,16 +1204,15 @@ async function AdvertisementStart2(AccountFlag, WorkData, Row) {
       }
       // 更新画面をスルー
       try {
-        const Koushin = await RPA.WebBrowser.wait(RPA.WebBrowser.Until.elementLocated({xpath:'/html/body/div/div/div[6]/div[2]/header/div'}),5000);
+        const Koushin = await RPA.WebBrowser.wait(RPA.WebBrowser.Until.elementLocated({xpath:'/html/body/div[1]/div/div[5]/div[2]/header/div'}),5000);
         const KoushinText = await Koushin.getText();
         if (KoushinText.length > 1) {
-          RPA.Logger.info(KoushinText);
-          const NextButton01 = await RPA.WebBrowser.findElementByXPath('/html/body/div[1]/div/div[6]/div[2]/footer/div[2]');
+          const NextButton01 = await RPA.WebBrowser.findElementByXPath('/html/body/div[1]/div/div[5]/div[2]/footer/div[1]');
           await RPA.WebBrowser.mouseClick(NextButton01);
           await RPA.sleep(3000);
         }
       } catch {
-        RPA.Logger.info('更新画面は出ませんでした');
+        RPA.Logger.info('更新画面は出ませんでした')
       }
       await RPA.sleep(2000);
       const CampaignId = await RPA.WebBrowser.findElementByXPath('/html/body/div[1]/div/div[2]/div[3]/div/table/tbody/tr[1]/td[3]');
