@@ -625,7 +625,11 @@ async function Pattern4(Row, WorkData) {
   await RPA.WebBrowser.sendKeys(CampaignPromoSeriesId,[WorkData[0][0][17]]);
   // 指定シリーズID(Q列)を入力
   const CampaignSpecifiedSeriesId = await RPA.WebBrowser.findElementByXPath('/html/body/div[1]/div/div[5]/div[2]/div[1]/div/form/div/div[10]/div/div[8]/div[2]/div/div[1]/div[2]/textarea');
-  await RPA.WebBrowser.sendKeys(CampaignSpecifiedSeriesId,[WorkData[0][0][16]]);
+  const Text1 = await encodeURI(WorkData[0][0][16]);
+  await RPA.WebBrowser.driver.executeScript(
+    `document.querySelectorAll("#reactroot > div > div.Modal__overlay___3CdlJ.Modal__full___3Mi9N.Modal__opened___-zyiB > div.Modal__modal___15eHS.Modal__full___3Mi9N > div.Modal__body___2lTdW.Modal__full___3Mi9N > div > form > div > div.FieldGroup__container___3fkr0 > div > div:nth-child(8) > div.Field__value___3-hi8 > div > div.Field__container___2rw9q.Field__column___2-TfA.Field__labelInline___2GdCv.Field__noMargin___1oAyZ.Field__alignNone___1dlxQ > div.Field__value___3-hi8 > textarea")[0].value = decodeURI("${Text1}");`
+  );
+  await RPA.WebBrowser.sendKeys(CampaignSpecifiedSeriesId, [RPA.WebBrowser.Key.ENTER]);
 }
 
 
