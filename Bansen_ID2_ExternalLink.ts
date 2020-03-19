@@ -27,7 +27,7 @@ async function WorkStart(JudgeCampaignId) {
     tokenType: "Bearer",
     expiryDate: parseInt(process.env.GOOGLE_EXPIRY_DATE, 10)
   });
-  
+  RPA.Logger.info('作業開始...');
   // キャンペーンIDと広告IDを保持する変数
   const IdList = [['','']];
   // 作業対象行とデータを取得
@@ -62,13 +62,13 @@ async function WorkStart(JudgeCampaignId) {
   // 一度ログインしたら、以降はログインページをスキップ
   FirstLoginFlag[0] = 'false';
 
-  // キャンペーンIDが記載されていなければキャンペーンIDから発番開始
+  // キャンペーンIDが発番されていない場合、キャンペーン作成からスタート
   if (JudgeCampaignId.length < 1) {
-    RPA.Logger.info('キャンペーン作成します');
+    RPA.Logger.info('キャンペーン 作成します');
     // キャンペーン作成を押下
     await CampaignStart();
 
-    // 共通のデータを入力
+    // 共通項目のデータを入力
     await CommonData(WorkData);
 
     // 配信先(F列)、配信方式(G列)に入力されている値から処理を分岐
@@ -76,7 +76,7 @@ async function WorkStart(JudgeCampaignId) {
     const Video = 'ビデオ,タイムシフト';
     const Kpi = 'KPI配信';
     const Shitei = '指定配信';
-    // 配信先設定(F列)を判定
+    // 配信先設定(F列)を選択
     if (WorkData[0][0][5] === Linear && WorkData[0][0][6] === Kpi) {
       await CampaignDeliver(WorkData);
     } else if (WorkData[0][0][5] === Video && WorkData[0][0][6] === Kpi) {
@@ -91,28 +91,25 @@ async function WorkStart(JudgeCampaignId) {
       Start();
     }
 
-    // 共通のエラー判定
+    // 共通項目のエラー判定
     await CommonJudgeError(Row, WorkData);
 
     // F列が「リニア」、G列が「KPI配信」の場合
     if (WorkData[0][0][5] === Linear && WorkData[0][0][6] === Kpi) {
       RPA.Logger.info(`${WorkData[0][0][5]}と${WorkData[0][0][6]}です`);
-      RPA.Logger.info('パターン2の処理を開始します');
       // K〜M列、O〜R列を入力
       await Pattern2(Row, WorkData);
     // F列が「ビデオ,タイムシフト」、G列が「KPI配信」の場合
     } else if (WorkData[0][0][5] === Video && WorkData[0][0][6] === Kpi) {
-      RPA.Logger.info('パターン3の処理を開始します');
       // R列、M列、P列、S列を入力
       await Pattern3(Row, WorkData);
     // F列が「ビデオ,タイムシフト」、G列が「指定配信」の場合
     } else if (WorkData[0][0][5] === Video && WorkData[0][0][6] === Shitei) {
-      RPA.Logger.info('パターン4の処理を開始します');
       // M列、P列、S〜T列を入力
       await Pattern4(Row, WorkData);
     }
 
-    // クラスタ(M列)を判定
+    // クラスタ(M列)を選択
     if (WorkData[0][0][5] === Linear && WorkData[0][0][6] === Kpi) {
       await Cluster(WorkData);
     } else if (WorkData[0][0][5] === Video && WorkData[0][0][6] === Kpi) {
@@ -130,7 +127,7 @@ async function WorkStart(JudgeCampaignId) {
       await Pattern4JudgeError(WorkData, Row);
     }
 
-    // 発番したキャンペーンIDを取得
+    // キャンペーンIDを発番し、取得
     await GetCampaignId(WorkData, IdList, Row);
 
     // 広告作成を開始
@@ -142,9 +139,9 @@ async function WorkStart(JudgeCampaignId) {
     // 広告作成を発番
     await GetAdvertisementId(IdList, Row);
   }
-  // キャンペーンIDが作成されていれば広告作成まで作業をスキップ
+  // 既にキャンペーンIDが発番されている場合、広告作成からスタート
   if (JudgeCampaignId.length > 1) {
-    RPA.Logger.info('広告作成します');
+    RPA.Logger.info('広告 作成します');
     await AdvertisementStart2(AccountFlag, WorkData, Row);
 
     await AdJudgeError2(WorkData, Row);
@@ -166,7 +163,7 @@ async function Start() {
     while (0 == 0) {
       // キャンペーン広告貼り付け（外部リンク付き）シートのB〜BB列を取得
       const JudgeData = await RPA.Google.Spreadsheet.getValues({spreadsheetId:`${SSID}`,range:`${SSName4}!B4:BB3000`});
-      // CPN ID発行（外部リンク付き）シートのA〜AH列を取得
+      // シートのA〜AH列を取得
       const AllData = await RPA.Google.Spreadsheet.getValues({spreadsheetId:`${SSID}`,range:`${SSName3}!A3:AH3000`});
         RPA.Logger.info('キャンペーンIDです');
         RPA.Logger.info(JudgeData[count][46]);
@@ -189,6 +186,7 @@ async function Start() {
       text: '【番宣 ID発行②（外部リンク）】でエラーが発生しました！'
     });
   }
+  RPA.Logger.info('作業を終了します');
   await RPA.WebBrowser.quit();
 }
 
@@ -217,11 +215,11 @@ async function AAAMSLogin(AccountFlag) {
     await RPA.WebBrowser.mouseClick(AAAMS_LoginNextButton);
     await RPA.sleep(3000);
   } catch {
-    RPA.Logger.info('ログイン画面飛ばします');
+    RPA.Logger.info('ログイン画面をスキップします');
   }
 
   await RPA.sleep(2000);
-  // チャンネル更新画面が出るため待機する
+  // チャンネル更新画面が出るため待機
   try {
     const ChannelAlart = await RPA.WebBrowser.wait(
       RPA.WebBrowser.Until.elementLocated({
@@ -251,14 +249,14 @@ async function AAAMSLogin(AccountFlag) {
     await RPA.WebBrowser.mouseClick(Alartbutton);
     await RPA.sleep(2000);
   } catch {
-    RPA.Logger.info('AAAMS アラート出ませんでしたので次に進みます');
+    RPA.Logger.info('AAAMS アラートが出ませんでしたので次に進みます');
   }
   if (AccountFlag == '外部リンク付き番宣') {
     RPA.Logger.info('外部リンク付き自社広告アカウントを直接呼び出します');
     await RPA.WebBrowser.get(process.env.AAAMS_Account_1);
   }
   if (AccountFlag == '買える') {
-    RPA.Logger.info('買えるAbemaTV社アカウントを直接呼び出しします');
+    RPA.Logger.info('買えるAbemaTV社アカウントを直接呼び出します');
     await RPA.WebBrowser.get(process.env.AAAMS_Account_2);
   }
   await RPA.sleep(3000);
@@ -290,7 +288,7 @@ async function AAAMSLogin2(AccountFlag) {
     await RPA.WebBrowser.get(process.env.AAAMS_Account_1);
   }
   if (AccountFlag == '買える') {
-    RPA.Logger.info('買えるAbemaTV社アカウントを直接呼び出しします');
+    RPA.Logger.info('買えるAbemaTV社アカウントを直接呼び出します');
     await RPA.WebBrowser.get(process.env.AAAMS_Account_2);
   }
   await RPA.sleep(2300);
@@ -298,7 +296,7 @@ async function AAAMSLogin2(AccountFlag) {
 
 
 async function GetDataRow(WorkData, Row) {
-  // ID円滑シートの作業用フラグ(AG列)を取得
+  // 作業用フラグ(AG列)を取得
   const WorkRow = await RPA.Google.Spreadsheet.getValues({spreadsheetId:`${SSID}`,range:`${SSName3}!AG1:AG200`});
   for(let i in WorkRow){
     if (WorkRow[i][0].indexOf('初期') == 0) {
@@ -306,8 +304,8 @@ async function GetDataRow(WorkData, Row) {
       break;
     }
   }
-  RPA.Logger.info('この行の作業実行します → ',Row[0]);
-  // ID円滑シートから作業対象行のデータを取得
+  RPA.Logger.info('この行の作業を開始します → ', Row[0]);
+  // シートから作業対象行のデータを取得
   WorkData[0] = await RPA.Google.Spreadsheet.getValues({spreadsheetId:`${SSID}`,range:`${SSName3}!A${Row[0]}:AD${Row[0]}`});
   RPA.Logger.info(WorkData[0]);
   // AG列に”作業中”と記載
@@ -365,20 +363,25 @@ async function CommonData(WorkData) {
 
 // 配信先設定(F列)の判定
 async function CampaignDeliver(WorkData) {
+  RPA.Logger.info('配信先設定 を選択します');
+  // 配信先設定の指定がない場合
   if (WorkData[0][0][5].length < 1) {
     const Uncheck = await RPA.WebBrowser.findElementByXPath('/html/body/div[1]/div/div[5]/div[2]/div[1]/div/form/div/div[7]/div[2]/div/div[2]/div[1]');
     await RPA.WebBrowser.mouseClick(Uncheck);
   } else {
-    ;
+    RPA.Logger.info('配信先設定の指定があるためスルーします');
   }
 }
 
 
 async function CampaignDeliver2(WorkData) {
+  RPA.Logger.info('配信先設定 を選択します');
   if (WorkData[0][0][5].length < 1) {
     const Uncheck = await RPA.WebBrowser.findElementByXPath('/html/body/div[1]/div/div[5]/div[2]/div[1]/div/form/div/div[7]/div[2]/div/div[2]/div[1]');
     await RPA.WebBrowser.mouseClick(Uncheck);
   } else {
+    // リニアのチェックを外して、ビデオ・タイムシフトにチェック
+    RPA.Logger.info('ビデオ・タイムシフトにチェックします');
     const Uncheck = await RPA.WebBrowser.findElementByXPath('/html/body/div[1]/div/div[5]/div[2]/div[1]/div/form/div/div[7]/div[2]/div/div[2]/div[1]');
     await RPA.WebBrowser.mouseClick(Uncheck);
     const Check = await RPA.WebBrowser.findElementByXPath('/html/body/div[1]/div/div[5]/div[2]/div[1]/div/form/div/div[7]/div[2]/div/div[2]/div[2]');
@@ -389,7 +392,7 @@ async function CampaignDeliver2(WorkData) {
 }
 
 
-// 共通のエラー判定
+// 共通項目のエラー判定
 async function CommonJudgeError(Row, WorkData) {
   // エラーが起きた場合、作業をスキップしてスタートに戻る
   const JudgeRow = await RPA.Google.Spreadsheet.getValues({spreadsheetId:`${SSID}`,range:`${SSName3}!AG${Row[0]}:AG${Row[0]}`});
@@ -397,6 +400,7 @@ async function CommonJudgeError(Row, WorkData) {
     RPA.Logger.info('エラーがあるため、作業をスキップします');
     Start();
   }
+  RPA.Logger.info('共通項目 エラー判定開始...');
   const error = [['エラー']];
   const DoubleCampaignName = await RPA.WebBrowser.wait(RPA.WebBrowser.Until.elementLocated({xpath:'/html/body/div[1]/div/div[5]/div[2]/div[1]/div/form/div/div[2]/div[1]'}),1000);
   const DoubleCampaignNameText = await DoubleCampaignName.getText();
@@ -426,13 +430,13 @@ async function CommonJudgeError(Row, WorkData) {
   }
   if (WorkData[0][0][5].length < 1) {
     const ErrorText6 = [['必須入力です']];
-    RPA.Logger.info(`エラー【${ErrorText6}】`);
+    RPA.Logger.info(`エラー【配信先設定：${ErrorText6}】`);
     await RPA.Google.Spreadsheet.setValues({spreadsheetId:`${SSID}`,range:`${SSName3}!AG${Row[0]}:AG${Row[0]}`,values:error});
     await RPA.Google.Spreadsheet.setValues({spreadsheetId:`${SSID}`,range:`${SSName3}!AK${Row[0]}:AK${Row[0]}`,values:ErrorText6});
   }
   if (WorkData[0][0][6].length < 1) {
     const ErrorText7 = [['必須入力です']];
-    RPA.Logger.info(`エラー【${ErrorText7}】`);
+    RPA.Logger.info(`エラー【配信方式設定：${ErrorText7}】`);
     await RPA.Google.Spreadsheet.setValues({spreadsheetId:`${SSID}`,range:`${SSName3}!AG${Row[0]}:AG${Row[0]}`,values:error});
     await RPA.Google.Spreadsheet.setValues({spreadsheetId:`${SSID}`,range:`${SSName3}!AL${Row[0]}:AL${Row[0]}`,values:ErrorText7});
   }
@@ -446,6 +450,7 @@ async function Pattern2(Row, WorkData) {
     RPA.Logger.info('エラーがあるため、作業をスキップします');
     Start();
   }
+  RPA.Logger.info('パターン 2 です');
   // 配信先曜日×時間帯テンプレート(H列)を入力
   const CampaignDayHourTempId = await RPA.WebBrowser.findElementByXPath('/html/body/div[1]/div/div[5]/div[2]/div[1]/div/form/div/div[10]/div/div[2]/div[2]/div[1]/div/div/div/div/span[1]/div[2]/input');
   await RPA.WebBrowser.sendKeys(CampaignDayHourTempId,[WorkData[0][0][7]]);
@@ -521,6 +526,7 @@ async function Pattern3(Row, WorkData) {
     RPA.Logger.info('エラーがあるため、作業をスキップします');
     Start();
   }
+  RPA.Logger.info('パターン 3 です');
   // 配信先曜日×時間帯テンプレート(H列)を入力
   const CampaignDayHourTempId = await RPA.WebBrowser.findElementByXPath('/html/body/div[1]/div/div[5]/div[2]/div[1]/div/form/div/div[10]/div/div[2]/div[2]/div[1]/div/div/div/div/span[1]/div[2]/input');
   await RPA.WebBrowser.sendKeys(CampaignDayHourTempId,[WorkData[0][0][7]]);
@@ -582,6 +588,7 @@ async function Pattern4(Row, WorkData) {
     RPA.Logger.info('エラーがあるため、作業をスキップします');
     Start();
   }
+  RPA.Logger.info('パターン 4 です');
   // 配信先曜日×時間帯テンプレート(H列)を入力
   const CampaignDayHourTempId = await RPA.WebBrowser.findElementByXPath('/html/body/div[1]/div/div[5]/div[2]/div[1]/div/form/div/div[10]/div/div[2]/div[2]/div[1]/div/div/div/div/span[1]/div[2]/input');
   await RPA.WebBrowser.sendKeys(CampaignDayHourTempId,[WorkData[0][0][7]]);
@@ -633,8 +640,9 @@ async function Pattern4(Row, WorkData) {
 }
 
 
-// クラスタ(N列)を判定
+// クラスタ(N列)を選択
 async function Cluster(WorkData) {
+  RPA.Logger.info('クラスタ を選択します');
   // セルの値を分割
   const ValuesN = WorkData[0][0][13].split(',');
   // クラスタ・全て選択をクリック
@@ -690,6 +698,7 @@ async function Cluster(WorkData) {
 
 
 async function Cluster2(WorkData) {
+  RPA.Logger.info('クラスタ を選択します');
   // セルの値を分割
   const ValuesN =WorkData[0][0][13].split(',');
   // クラスタ・全て選択をクリック
@@ -745,6 +754,7 @@ async function Cluster2(WorkData) {
 
 
 async function Pattern2JudgeError(WorkData, Row) {
+  RPA.Logger.info('パターン 2 エラー判定開始...');
   const error = [['エラー']];
   // エラーが起きた場合、作業をスキップしてスタートに戻る
   const FieldError4 = await RPA.WebBrowser.wait(RPA.WebBrowser.Until.elementLocated({xpath:'/html/body/div[1]/div/div[5]/div[2]/div[1]/div/form/div/div[10]/div/div[2]/div[1]'}),1000);
@@ -780,7 +790,7 @@ async function Pattern2JudgeError(WorkData, Row) {
     await RPA.Google.Spreadsheet.setValues({spreadsheetId:`${SSID}`,range:`${SSName3}!AP${Row[0]}:AP${Row[0]}`,values:ErrorText11});
   }
   if (WorkData[0][0][12].length < 1) {
-      ;
+    RPA.Logger.info('指定シリーズNGの記載がないためスルーします');
   } else {
     const NotCampaignSeriesNg = await RPA.WebBrowser.wait(RPA.WebBrowser.Until.elementLocated({xpath:'/html/body/div[1]/div/div[5]/div[2]/div[1]/div/form/div/div[10]/div/div[6]/div[2]/div/div[2]'}),1000);
     const NotCampaignSeriesNgText = await NotCampaignSeriesNg.getText();
@@ -815,6 +825,7 @@ async function Pattern2JudgeError(WorkData, Row) {
 
 
 async function Pattern3JudgeError(WorkData, Row) {
+  RPA.Logger.info('パターン 3 エラー判定開始...');
   const error = [['エラー']];
   // エラーが起きた場合、作業をスキップしてスタートに戻る
   const FieldError4 = await RPA.WebBrowser.wait(RPA.WebBrowser.Until.elementLocated({xpath:'/html/body/div[1]/div/div[5]/div[2]/div[1]/div/form/div/div[10]/div/div[2]/div[1]'}),1000);
@@ -834,7 +845,7 @@ async function Pattern3JudgeError(WorkData, Row) {
     await RPA.Google.Spreadsheet.setValues({spreadsheetId:`${SSID}`,range:`${SSName3}!AN${Row[0]}:AN${Row[0]}`,values:ErrorText9});
   }
   if (WorkData[0][0][12].length < 1) {
-    ;
+    RPA.Logger.info('指定シリーズNGの記載がないためスルーします');
   } else {
     const NotCampaignSeriesNg = await RPA.WebBrowser.wait(RPA.WebBrowser.Until.elementLocated({xpath:'/html/body/div[1]/div/div[5]/div[2]/div[1]/div/form/div/div[10]/div/div[5]/div[2]/div/div[2]'}),1000);
     const NotCampaignSeriesNgText = await NotCampaignSeriesNg.getText();
@@ -872,6 +883,7 @@ async function Pattern3JudgeError(WorkData, Row) {
 
 
 async function Pattern4JudgeError(WorkData, Row) {
+  RPA.Logger.info('パターン 4 エラー判定開始...');
   const error = [['エラー']];
   // エラーが起きた場合、作業をスキップしてスタートに戻る
   const FieldError4 = await RPA.WebBrowser.wait(RPA.WebBrowser.Until.elementLocated({xpath:'/html/body/div[1]/div/div[5]/div[2]/div[1]/div/form/div/div[10]/div/div[2]/div[1]'}),1000);
@@ -906,7 +918,7 @@ async function Pattern4JudgeError(WorkData, Row) {
     await RPA.Google.Spreadsheet.setValues({spreadsheetId:`${SSID}`,range:`${SSName3}!AU${Row[0]}:AU${Row[0]}`,values:ErrorText16});
   }
   if (WorkData[0][0][16].length < 1) {
-    ;
+    RPA.Logger.info('指定シリーズIDの記載がないためスルーします');
   } else {
     const NotCampaignSpecifiedSeriesId = await RPA.WebBrowser.wait(RPA.WebBrowser.Until.elementLocated({xpath:'/html/body/div[1]/div/div[5]/div[2]/div[1]/div/form/div/div[10]/div/div[8]/div[2]/div/div[2]'}),1000);
     const NotCampaignSpecifiedSeriesIdText = await NotCampaignSpecifiedSeriesId.getText();
@@ -938,6 +950,7 @@ async function GetCampaignId(WorkData, IdList, Row) {
   // OKボタンをクリック
   const OKButton = await RPA.WebBrowser.wait(RPA.WebBrowser.Until.elementLocated({xpath:'//*[@id="reactroot"]/div/div[5]/div[2]/footer/div[2]'}), 5000);
   await RPA.WebBrowser.mouseClick(OKButton);
+  RPA.Logger.info('キャンペーン ID発番中...');
   await RPA.sleep(5000);
   // キャンペーン名が一致するか判定
   for (var i = 1; i <= 15; i++) {
@@ -963,6 +976,7 @@ async function GetCampaignId(WorkData, IdList, Row) {
       await RPA.Google.Spreadsheet.setValues({spreadsheetId:`${SSID}`,range:`${SSName4}!AV${Number(i) + 4}:AW${Number(i) + 4}`,values:IdList});
     }
   }
+  RPA.Logger.info('キャンペーン 作成完了しました');
 }
 
 
@@ -1088,8 +1102,9 @@ async function AdvertisementStart(WorkData, Row) {
 
 
 async function AdJudgeError(WorkData, Row) {
-  // エラーが起きた場合、作業をスキップしてスタートに戻る
+  RPA.Logger.info('広告作成 エラー判定開始...');
   const error = [['エラー']];
+  // エラーが起きた場合、作業をスキップしてスタートに戻る
   if (WorkData[0][0][2].length < 1 || WorkData[0][0][3].length < 1 || WorkData[0][0][2].length < 1 && WorkData[0][0][3].length < 1) {
     const ErrorText3 = [['【広告作成】必須項目です']];
     RPA.Logger.info(`エラー【${ErrorText3}】`);
@@ -1146,6 +1161,7 @@ async function GetAdvertisementId(IdList, Row) {
   // OKボタンをクリック
   const OKButton2 = await RPA.WebBrowser.findElementByXPath('/html/body/div[1]/div/div[5]/div[2]/footer/div[2]');
   await RPA.WebBrowser.mouseClick(OKButton2);
+  RPA.Logger.info('広告 ID発番中...');
   await RPA.sleep(5000);
   // 発番した広告IDの最右側の「・・・」をマウスオーバー
   const BalloonMenu = await RPA.WebBrowser.wait(
@@ -1168,6 +1184,7 @@ async function GetAdvertisementId(IdList, Row) {
   RPA.Logger.info(IdList);
   // キャンペーン広告貼り付け（外部リンク付き）シートのAV〜AW列に発番した広告IDを記載
   await RPA.Google.Spreadsheet.setValues({spreadsheetId:`${SSID}`,range:`${SSName4}!AV${Row[0] + 1}:AW${Row[0] + 1}`,values:IdList});
+  RPA.Logger.info('広告 作成完了しました');
   // 作業完了を記載
   await RPA.Google.Spreadsheet.setValues({spreadsheetId:`${SSID}`,range:`${SSName3}!AG${Row[0]}:AG${Row[0]}`,values:[['完了']]});
 }
@@ -1355,8 +1372,9 @@ async function AdvertisementStart2(AccountFlag, WorkData, Row) {
 
 
 async function AdJudgeError2(WorkData, Row) {
-  // エラーが起きた場合、作業をスキップしてスタートに戻る
+  RPA.Logger.info('広告作成 エラー判定開始...');
   const error = [['エラー']];
+  // エラーが起きた場合、作業をスキップしてスタートに戻る
   if (WorkData[0][0][2].length < 1 || WorkData[0][0][3].length < 1 || WorkData[0][0][2].length < 1 && WorkData[0][0][3].length < 1) {
     const ErrorText3 = [['【広告作成】必須項目です']];
     RPA.Logger.info(`エラー【${ErrorText3}】`);
@@ -1413,6 +1431,7 @@ async function GetAdvertisementId2(Row) {
   // OKボタンをクリック
   const OKButton2 = await RPA.WebBrowser.findElementByXPath('/html/body/div[1]/div/div[5]/div[2]/footer/div[2]');
   await RPA.WebBrowser.mouseClick(OKButton2);
+  RPA.Logger.info('広告 ID発番中...');
   await RPA.sleep(5000);
   // 発番した広告IDの最右側の「・・・」をマウスオーバー
   const BalloonMenu = await RPA.WebBrowser.wait(
@@ -1435,6 +1454,7 @@ async function GetAdvertisementId2(Row) {
   RPA.Logger.info(AdvertisementId);
   // キャンペーン広告貼り付け（外部リンク付き）シートのAW列に発番した広告IDを記載
   await RPA.Google.Spreadsheet.setValues({spreadsheetId:`${SSID}`,range:`${SSName4}!AW${Row[0] + 1}:AW${Row[0] + 1}`,values:[[AdvertisementId]]});
+  RPA.Logger.info('広告 作成完了しました');
   // 作業完了を記載
   await RPA.Google.Spreadsheet.setValues({spreadsheetId:`${SSID}`,range:`${SSName3}!AG${Row[0]}:AG${Row[0]}`,values:[['完了']]});
 }
