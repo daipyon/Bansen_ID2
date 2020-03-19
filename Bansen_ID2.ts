@@ -89,23 +89,19 @@ async function WorkStart(JudgeCampaignId) {
     // F列が「リニア」、G列が「埋め配信」の場合
     if (WorkData[0][0][5] === Linear && WorkData[0][0][6] === Ume) {
       RPA.Logger.info(`${WorkData[0][0][5]}と${WorkData[0][0][6]}です`);
-      RPA.Logger.info('パターン1の処理を開始します');
       // K〜N列、R列を入力
       await Pattern1(Row, WorkData);
     // F列が「リニア」、G列が「KPI配信」の場合
     } else if (WorkData[0][0][5] === Linear && WorkData[0][0][6] === Kpi) {
       RPA.Logger.info(`${WorkData[0][0][5]}と${WorkData[0][0][6]}です`);
-      RPA.Logger.info('パターン2の処理を開始します');
       // K〜M列、O〜R列を入力
       await Pattern2(Row, WorkData);
     // F列が「ビデオ,タイムシフト」、G列が「KPI配信」の場合
     } else if (WorkData[0][0][5] === Video && WorkData[0][0][6] === Kpi) {
-      RPA.Logger.info('パターン3の処理を開始します');
       // R列、M列、P列、S列を入力
       await Pattern3(Row, WorkData);
     // F列が「ビデオ,タイムシフト」、G列が「指定配信」の場合
     } else if (WorkData[0][0][5] === Video && WorkData[0][0][6] === Shitei) {
-      RPA.Logger.info('パターン4の処理を開始します');
       // M列、P列、S〜T列を入力
       await Pattern4(Row, WorkData);
     }
@@ -901,7 +897,7 @@ async function Pattern1JudgeError(WorkData, Row) {
     await RPA.Google.Spreadsheet.setValues({spreadsheetId:`${SSID}`,range:`${SSName}!AP${Row[0]}:AP${Row[0]}`,values:ErrorText11});
   }
   if (WorkData[0][0][17].length < 1) {
-    ;
+    RPA.Logger.info('指定シリーズNGの記載がないためスルーします');
   } else {
     const NotCampaignSeriesNg = await RPA.WebBrowser.wait(RPA.WebBrowser.Until.elementLocated({xpath:'/html/body/div[1]/div/div[5]/div[2]/div[1]/div/form/div/div[10]/div/div[6]/div[2]/div/div[2]'}),1000);
     const NotCampaignSeriesNgText = await NotCampaignSeriesNg.getText();
@@ -966,7 +962,7 @@ async function Pattern2JudgeError(WorkData, Row) {
     await RPA.Google.Spreadsheet.setValues({spreadsheetId:`${SSID}`,range:`${SSName}!AP${Row[0]}:AP${Row[0]}`,values:ErrorText11});
   }
   if (WorkData[0][0][17].length < 1) {
-      ;
+    RPA.Logger.info('指定シリーズNGの記載がないためスルーします');
   } else {
     const NotCampaignSeriesNg = await RPA.WebBrowser.wait(RPA.WebBrowser.Until.elementLocated({xpath:'/html/body/div[1]/div/div[5]/div[2]/div[1]/div/form/div/div[10]/div/div[6]/div[2]/div/div[2]'}),1000);
     const NotCampaignSeriesNgText = await NotCampaignSeriesNg.getText();
@@ -1236,9 +1232,9 @@ async function AdvertisementStart(WorkData, Row) {
 
 
 async function AdJudgeError(WorkData, Row) {
-  // エラーが起きた場合、作業をスキップしてスタートに戻る
   RPA.Logger.info('広告作成 エラー判定開始...');
   const error = [['エラー']];
+  // エラーが起きた場合、作業をスキップしてスタートに戻る
   if (WorkData[0][0][25].length < 1 || WorkData[0][0][26].length < 1 || WorkData[0][0][25].length < 1 && WorkData[0][0][26].length < 1) {
     const ErrorText3 = [['【広告作成】必須項目です']];
     RPA.Logger.info(`エラー【${ErrorText3}】`);
@@ -1435,9 +1431,9 @@ async function AdvertisementStart2(WorkData, Row) {
 
 
 async function AdJudgeError2(WorkData, Row) {
-  // エラーが起きた場合、作業をスキップしてスタートに戻る
   RPA.Logger.info('広告作成 エラー判定開始...');
   const error = [['エラー']];
+  // エラーが起きた場合、作業をスキップしてスタートに戻る
   if (WorkData[0][0][25].length < 1 || WorkData[0][0][26].length < 1 || WorkData[0][0][25].length < 1 && WorkData[0][0][26].length < 1) {
     const ErrorText3 = [['【広告作成】必須項目です']];
     RPA.Logger.info(`エラー【${ErrorText3}】`);
