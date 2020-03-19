@@ -578,7 +578,7 @@ async function Pattern2(Row, WorkData) {
   await RPA.WebBrowser.sendKeys(GoalGimp,[WorkData[0][0][15]]);
   await RPA.WebBrowser.sendKeys(GoalGimp,[RPA.WebBrowser.Key.ENTER]);
   if (WorkData[0][0][16].length < 1) {
-    ;
+    RPA.Logger.info('期間目標の記載がないためスルーします');
   } else {
     // セルの値を期間目標impと目標期間に分割
     const ValuesQ = WorkData[0][0][16].split('\n');
