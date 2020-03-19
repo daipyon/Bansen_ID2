@@ -466,7 +466,7 @@ async function Pattern1(Row, WorkData) {
   for (let i in FilterTempValueText) {
     if (WorkData[0][0][8] == FilterTempValueText[i]) {
       RPA.Logger.info(`${FilterTempValueText[i]} 一致しました`);
-      const FilterTempSelectValue = await RPA.WebBrowser.findElementByXPath(`/html/body/div[1]/div/div[5]/div[2]/div[1]/div/form/div/div[10]/div/div[3]/div[2]/div[1]/div/div/div/div[2]/div/div[${Number(i) + Number(1)}]`);
+      const FilterTempSelectValue = await RPA.WebBrowser.findElementByXPath(`/html/body/div[1]/div/div[5]/div[2]/div[1]/div/form/div/div[10]/div/div[3]/div[2]/div[1]/div/div/div/div/div/div[${Number(i) + Number(1)}]`);
       await RPA.sleep(100);
       await RPA.WebBrowser.mouseClick(FilterTempSelectValue);
       FilterTempFlag[0] = false;
@@ -532,7 +532,7 @@ async function Pattern2(Row, WorkData) {
   for (let i in FilterTempValueText) {
     if (WorkData[0][0][8] == FilterTempValueText[i]) {
       RPA.Logger.info(`${FilterTempValueText[i]} 一致しました`);
-      const FilterTempSelectValue = await RPA.WebBrowser.findElementByXPath(`/html/body/div[1]/div/div[5]/div[2]/div[1]/div/form/div/div[10]/div/div[3]/div[2]/div[1]/div/div/div/div[2]/div/div[${Number(i) + Number(1)}]`);
+      const FilterTempSelectValue = await RPA.WebBrowser.findElementByXPath(`/html/body/div[1]/div/div[5]/div[2]/div[1]/div/form/div/div[10]/div/div[3]/div[2]/div[1]/div/div/div/div/div/div[${Number(i) + Number(1)}]`);
       await RPA.sleep(100);
       await RPA.WebBrowser.mouseClick(FilterTempSelectValue);
       FilterTempFlag[0] = false;
@@ -642,7 +642,7 @@ async function Pattern3(Row, WorkData) {
   for (let i in FilterTempValueText) {
     if (WorkData[0][0][8] == FilterTempValueText[i]) {
       RPA.Logger.info(`${FilterTempValueText[i]} 一致しました`);
-      const FilterTempSelectValue = await RPA.WebBrowser.findElementByXPath(`/html/body/div[1]/div/div[5]/div[2]/div[1]/div/form/div/div[10]/div/div[3]/div[2]/div[1]/div/div/div/div[2]/div/div[${Number(i) + Number(1)}]`);
+      const FilterTempSelectValue = await RPA.WebBrowser.findElementByXPath(`/html/body/div[1]/div/div[5]/div[2]/div[1]/div/form/div/div[10]/div/div[3]/div[2]/div[1]/div/div/div/div/div/div[${Number(i) + Number(1)}]`);
       await RPA.sleep(100);
       await RPA.WebBrowser.mouseClick(FilterTempSelectValue);
       FilterTempFlag[0] = false;
@@ -694,7 +694,7 @@ async function Pattern4(Row, WorkData) {
   for (let i in FilterTempValueText) {
     if (WorkData[0][0][8] == FilterTempValueText[i]) {
       RPA.Logger.info(`${FilterTempValueText[i]} 一致しました`);
-      const FilterTempSelectValue = await RPA.WebBrowser.findElementByXPath(`/html/body/div[1]/div/div[5]/div[2]/div[1]/div/form/div/div[10]/div/div[3]/div[2]/div[1]/div/div/div/div[2]/div/div[${Number(i) + Number(1)}]`);
+      const FilterTempSelectValue = await RPA.WebBrowser.findElementByXPath(`/html/body/div[1]/div/div[5]/div[2]/div[1]/div/form/div/div[10]/div/div[3]/div[2]/div[1]/div/div/div/div/div/div[${Number(i) + Number(1)}]`);
       await RPA.sleep(100);
       await RPA.WebBrowser.mouseClick(FilterTempSelectValue);
       FilterTempFlag[0] = false;
