@@ -492,7 +492,7 @@ async function Pattern2(Row, WorkData) {
     const CroseButton = await RPA.WebBrowser.findElementByXPath('/html/body/div[1]/div/div[5]/div[2]/div[1]/div/form/div/div[4]/div[7]/div/div[5]/div[2]/div/div[1]/div[2]/div/div/div/div/div/span[2]');
     await RPA.WebBrowser.mouseClick(CroseButton);
   } else {
-    const CampaignAdjacentAcceptableAd = await RPA.WebBrowser.findElementByXPath('/html/body/div[1]/div/div[5]/div[2]/div[1]/div/form/div/div[10]/div/div[5]/div[2]/div/div[1]/div[2]/div/div/div/div/div/span[1]/div[2]/input');
+    const CampaignAdjacentAcceptableAd = await RPA.WebBrowser.findElementByXPath('/html/body/div[1]/div/div[5]/div[2]/div[1]/div/form/div/div[4]/div[7]/div/div[5]/div[2]/div/div[1]/div[2]/div/div/div/div/div/span[1]/div[2]/input');
     await RPA.WebBrowser.sendKeys(CampaignAdjacentAcceptableAd,[WorkData[0][0][10]]);
     await RPA.WebBrowser.sendKeys(CampaignAdjacentAcceptableAd,[RPA.WebBrowser.Key.ENTER]);
   }
