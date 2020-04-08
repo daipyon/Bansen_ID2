@@ -188,6 +188,8 @@ async function Start() {
   }
   RPA.Logger.info('作業を終了します');
   await RPA.WebBrowser.quit();
+  await RPA.sleep(1000);
+  await process.exit();
 }
 
 Start();
