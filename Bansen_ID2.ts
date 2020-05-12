@@ -474,11 +474,16 @@ async function Pattern1(Row, WorkData) {
     await RPA.WebBrowser.sendKeys(CampaignFilterTempId,[RPA.WebBrowser.Key.DOWN]);
   }
   await RPA.sleep(1000);
+  // 取得した値を分割
+  const ValuesJ = WorkData[0][0][9].split(',');
+  await RPA.Logger.info(ValuesJ);
   // NGシリーズ属性(J列)を入力
   const CampaignAttributeIds = await RPA.WebBrowser.findElementByXPath('/html/body/div[1]/div/div[5]/div[2]/div[1]/div/form/div/div[4]/div[7]/div/div[4]/div[2]/div[1]/div/div/div/div/span[1]/div[2]/input');
-  await RPA.WebBrowser.sendKeys(CampaignAttributeIds,[WorkData[0][0][9]]);
-  await RPA.sleep(500);
-  await RPA.WebBrowser.sendKeys(CampaignAttributeIds,[RPA.WebBrowser.Key.ENTER]);
+  for (let i in ValuesJ) {
+    await RPA.WebBrowser.sendKeys(CampaignAttributeIds,[ValuesJ[i]]);
+    await RPA.sleep(500);
+    await RPA.WebBrowser.sendKeys(CampaignAttributeIds,[RPA.WebBrowser.Key.ENTER]);
+  }
   // 隣接許容レベル・広告(K列)を入力
   if (WorkData[0][0][10].length < 1) {
     const CroseButton = await RPA.WebBrowser.findElementByXPath('/html/body/div[1]/div/div[5]/div[2]/div[1]/div/form/div/div[4]/div[7]/div/div[5]/div[2]/div/div[1]/div[2]/div/div/div/div/div/span[2]');
@@ -544,11 +549,16 @@ async function Pattern2(Row, WorkData) {
     await RPA.WebBrowser.sendKeys(CampaignFilterTempId,[RPA.WebBrowser.Key.DOWN]);
   }
   await RPA.sleep(1000);
+  // 取得した値を分割
+  const ValuesJ = WorkData[0][0][9].split(',');
+  await RPA.Logger.info(ValuesJ);
   // NGシリーズ属性(J列)を入力
   const CampaignAttributeIds = await RPA.WebBrowser.findElementByXPath('/html/body/div[1]/div/div[5]/div[2]/div[1]/div/form/div/div[4]/div[7]/div/div[4]/div[2]/div[1]/div/div/div/div/span[1]/div[2]/input');
-  await RPA.WebBrowser.sendKeys(CampaignAttributeIds,[WorkData[0][0][9]]);
-  await RPA.sleep(500);
-  await RPA.WebBrowser.sendKeys(CampaignAttributeIds,[RPA.WebBrowser.Key.ENTER]);
+  for (let i in ValuesJ) {
+    await RPA.WebBrowser.sendKeys(CampaignAttributeIds,[ValuesJ[i]]);
+    await RPA.sleep(500);
+    await RPA.WebBrowser.sendKeys(CampaignAttributeIds,[RPA.WebBrowser.Key.ENTER]);
+  }
   // 隣接許容レベル・広告(K列)を入力
   if (WorkData[0][0][10].length < 1) {
     const CroseButton = await RPA.WebBrowser.findElementByXPath('/html/body/div[1]/div/div[5]/div[2]/div[1]/div/form/div/div[4]/div[7]/div/div[5]/div[2]/div/div[1]/div[2]/div/div/div/div/div/span[2]');
@@ -618,11 +628,16 @@ async function Pattern3(Row, WorkData) {
     await RPA.WebBrowser.sendKeys(CampaignFilterTempId,[RPA.WebBrowser.Key.DOWN]);
   }
   await RPA.sleep(1000);
+  // 取得した値を分割
+  const ValuesJ = WorkData[0][0][9].split(',');
+  await RPA.Logger.info(ValuesJ);
   // NGシリーズ属性(J列)を入力
   const CampaignAttributeIds = await RPA.WebBrowser.findElementByXPath('/html/body/div[1]/div/div[5]/div[2]/div[1]/div/form/div/div[4]/div[7]/div/div[4]/div[2]/div[1]/div/div/div/div/span[1]/div[2]/input');
-  await RPA.WebBrowser.sendKeys(CampaignAttributeIds,[WorkData[0][0][9]]);
-  await RPA.sleep(500);
-  await RPA.WebBrowser.sendKeys(CampaignAttributeIds,[RPA.WebBrowser.Key.ENTER]);
+  for (let i in ValuesJ) {
+    await RPA.WebBrowser.sendKeys(CampaignAttributeIds,[ValuesJ[i]]);
+    await RPA.sleep(500);
+    await RPA.WebBrowser.sendKeys(CampaignAttributeIds,[RPA.WebBrowser.Key.ENTER]);
+  }
   // 指定シリーズNG(R列)を入力
   const CampaignSeriesNg = await RPA.WebBrowser.findElementByXPath('/html/body/div[1]/div/div[5]/div[2]/div[1]/div/form/div/div[4]/div[7]/div/div[5]/div[2]/div/div[1]/div[2]/textarea');
   await RPA.WebBrowser.sendKeys(CampaignSeriesNg,[WorkData[0][0][17]]);
@@ -674,11 +689,16 @@ async function Pattern4(Row, WorkData) {
     await RPA.WebBrowser.sendKeys(CampaignFilterTempId,[RPA.WebBrowser.Key.DOWN]);
   }
   await RPA.sleep(1000);
+  // 取得した値を分割
+  const ValuesJ = WorkData[0][0][9].split(',');
+  await RPA.Logger.info(ValuesJ);
   // NGシリーズ属性(J列)を入力
   const CampaignAttributeIds = await RPA.WebBrowser.findElementByXPath('/html/body/div[1]/div/div[5]/div[2]/div[1]/div/form/div/div[4]/div[7]/div/div[4]/div[2]/div[1]/div/div/div/div/span[1]/div[2]/input');
-  await RPA.WebBrowser.sendKeys(CampaignAttributeIds,[WorkData[0][0][9]]);
-  await RPA.sleep(500);
-  await RPA.WebBrowser.sendKeys(CampaignAttributeIds,[RPA.WebBrowser.Key.ENTER]);
+  for (let i in ValuesJ) {
+    await RPA.WebBrowser.sendKeys(CampaignAttributeIds,[ValuesJ[i]]);
+    await RPA.sleep(500);
+    await RPA.WebBrowser.sendKeys(CampaignAttributeIds,[RPA.WebBrowser.Key.ENTER]);
+  }
   // 総目標imp(P列)を入力
   const GoalGimp = await RPA.WebBrowser.findElementByXPath('/html/body/div[1]/div/div[5]/div[2]/div[1]/div/form/div/div[4]/div[7]/div/div[7]/div[2]/div/input');
   await RPA.WebBrowser.sendKeys(GoalGimp,[WorkData[0][0][15]]);
